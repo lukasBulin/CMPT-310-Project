@@ -72,10 +72,17 @@ y_pred_bow = bow_model.predict(X_test_bow)
 y_prob_bow = bow_model.predict_proba(X_test_bow)[:, 1]
 
 print("\n--- Bag of Words Results ---")
-print("Accuracy:", accuracy_score(y_test, y_pred_bow))
+acc_bow = accuracy_score(y_test, y_pred_bow)
+print("Accuracy:", acc_bow)
 print(confusion_matrix(y_test, y_pred_bow))
 print(classification_report(y_test, y_pred_bow))
 
+#tn,tp,fn,fp
+
+tn_bow,fp_bow,fn_bow,tp_bow = confusion_matrix(y_test, y_pred_bow).ravel()
+print("\n--- Error Analysis (BoW) ---")
+print("False Positives:", fp_bow)
+print("False Negatives:", fn_bow)
 
 tfidf_vectorizer = TfidfVectorizer(
     lowercase=True,
@@ -92,9 +99,41 @@ y_pred_tfidf = tfidf_model.predict(X_test_tfidf)
 y_prob_tfidf = tfidf_model.predict_proba(X_test_tfidf)[:, 1]
 
 print("\n--- TF-IDF Results ---")
-print("Accuracy:", accuracy_score(y_test, y_pred_tfidf))
+acc_tfidf = accuracy_score(y_test, y_pred_tfidf)
+print("Accuracy:", acc_tfidf)
 print(confusion_matrix(y_test, y_pred_tfidf))
 print(classification_report(y_test, y_pred_tfidf))
+
+
+#tn,tp,fn,fp
+tn,tp,fn,fp = confusion_matrix(y_test, y_pred_tfidf).ravel()
+print("\n--- Error Analysis (TF-IDF) ---")
+print("False Positives:", fp)
+print("False Negatives:", fn)
+
+# Naive Bayes Model (trains on tdidf features)
+nb_model = MultinomialNB()
+nb_model.fit(X_train_tfidf, y_train)
+y_pred_nb = nb_model.predict(X_test_tfidf)
+acc_nb = accuracy_score(y_test, y_pred_nb)
+
+print("\n--- Naive Bayes Results ---")
+print("Accuracy:", acc_nb)
+print(confusion_matrix(y_test, y_pred_nb))
+print(classification_report(y_test, y_pred_nb))
+
+
+print("\n--- Model Comparison ---")
+print("BoW Accuracy:", acc_bow)
+print("TF-IDF Accuracy:", acc_tfidf)
+print("Naive Bayes Accuracy:", acc_nb)
+
+#naive bayes tn,fp,fn,tp
+tn_nb, fp_nb, fn_nb, tp_nb = confusion_matrix(y_test, y_pred_nb).ravel()
+print("\n--- Error Analysis (Naive Bayes) ---")
+print("False Positives:", fp_nb)
+print("False Negatives:", fn_nb)
+
 
 def predict_message(message, vectorizer, model):
     features = vectorizer.transform([message])
@@ -103,7 +142,7 @@ def predict_message(message, vectorizer, model):
     label = "SPAM" if pred == 1 else "NOT SPAM"
     return label, confidence
 
-test_message = "I am Jeel and i wanted to talk to you about your insurance-"
+test_message = "Please call our customer service representative as you have an appointment"
 
 label, conf = predict_message(test_message, tfidf_vectorizer, tfidf_model)
 print(f"\nMessage: {test_message}")
