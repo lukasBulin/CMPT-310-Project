@@ -106,7 +106,7 @@ print(classification_report(y_test, y_pred_tfidf))
 
 
 #tn,tp,fn,fp
-tn,tp,fn,fp = confusion_matrix(y_test, y_pred_tfidf).ravel()
+tn,fp,fn,tp = confusion_matrix(y_test, y_pred_tfidf).ravel()
 print("\n--- Error Analysis (TF-IDF) ---")
 print("False Positives:", fp)
 print("False Negatives:", fn)
