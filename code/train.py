@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 import os
 
 
@@ -133,6 +134,43 @@ tn_nb, fp_nb, fn_nb, tp_nb = confusion_matrix(y_test, y_pred_nb).ravel()
 print("\n--- Error Analysis (Naive Bayes) ---")
 print("False Positives:", fp_nb)
 print("False Negatives:", fn_nb)
+
+
+# -------------------
+# Visualizations ----
+# -------------------
+
+RESULT_DIR = os.path.join(BASE_DIR, "..", "result")
+
+# 1. Accuracy comparison bar chart
+models = ["BoW", "TF-IDF", "Naive Bayes"]
+accuracies = [acc_bow, acc_tfidf, acc_nb]
+
+plt.figure(figsize=(8, 5))
+bars = plt.bar(models, accuracies, color=["#4c72b0", "#dd8452", "#55a868"])
+plt.ylim(0.9, 1.0)
+plt.ylabel("Accuracy")
+plt.title("Model Accuracy Comparison")
+for bar, acc in zip(bars, accuracies):
+    plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.002,
+             f"{acc:.4f}", ha="center", va="bottom", fontweight="bold")
+plt.tight_layout()
+plt.savefig(os.path.join(RESULT_DIR, "model_accuracy.png"))
+plt.close()
+
+# 2. Confusion matrix heatmap for TF-IDF
+cm_tfidf = confusion_matrix(y_test, y_pred_tfidf)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm_tfidf, annot=True, fmt="d", cmap="Blues",
+            xticklabels=["Ham", "Spam"], yticklabels=["Ham", "Spam"])
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix - TF-IDF Model")
+plt.tight_layout()
+plt.savefig(os.path.join(RESULT_DIR, "confusion_matrix_tfidf.png"))
+plt.close()
+
+print("\nPlots saved to result/ folder.")
 
 
 def predict_message(message, vectorizer, model):
