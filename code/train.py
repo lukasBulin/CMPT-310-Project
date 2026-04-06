@@ -172,6 +172,31 @@ plt.close()
 
 print("\nPlots saved to result/ folder.")
 
+# 3. Confusion matrix heatmap for BoW
+cm_bow = confusion_matrix(y_test, y_pred_bow)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm_bow, annot=True, fmt="d", cmap="Greens",
+            xticklabels=["Ham", "Spam"], yticklabels=["Ham", "Spam"])
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix - BoW Model")
+plt.tight_layout()
+plt.savefig(os.path.join(RESULT_DIR, "confusion_matrix_bow.png"))
+plt.close()
+
+# 4. Confusion matrix heatmap for Naive Bayes
+cm_nb = confusion_matrix(y_test, y_pred_nb)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm_nb, annot=True, fmt="d", cmap="Oranges",
+            xticklabels=["Ham", "Spam"], yticklabels=["Ham", "Spam"])
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix - Naive Bayes Model")
+plt.tight_layout()
+plt.savefig(os.path.join(RESULT_DIR, "confusion_matrix_nb.png"))
+plt.close()
+
+
 
 def predict_message(message, vectorizer, model):
     features = vectorizer.transform([message])
